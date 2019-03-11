@@ -38,8 +38,8 @@ export const ThemedBase = ThemedMixin(WidgetBase);
 export class AudioPlayerBase<
 	P extends AudioPlayerProperties = AudioPlayerProperties
 > extends ThemedBase<P> {
-	private _audioContext: AudioContext;
-	private _buffer: Buffer;
+	private _audioContext: AudioContext = {} as AudioContext;
+	private _buffer: Buffer = {} as Buffer;
 
 	// Timer trigger to signal the end of one track and to start the next track
 	private _trackTimeout: any;
@@ -53,6 +53,16 @@ export class AudioPlayerBase<
 
 	private _clearTrackTimeout() {
 		clearTimeout(this._trackTimeout);
+	}
+
+	// Instantiates audio context, audio context can only be instantiated after a user interaction
+	// https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
+	private _instantiateAudioContext() {
+		if (Object.keys(Object.getPrototypeOf(this._audioContext)).length === 0) {
+			this._audioContext = new (globalObject.AudioContext ||
+				globalObject.webkitAudioContext)();
+			this._buffer = new Buffer(this._audioContext);
+		}
 	}
 
 	private _pauseTrack(index: number) {
@@ -96,6 +106,7 @@ export class AudioPlayerBase<
 
 	private _toggleSound(index: number, audioData: AudioData[]) {
 		return () => {
+			this._instantiateAudioContext();
 			const url = audioData[index].url;
 			// If we are pausing the track
 			if (this._track === index + 1 && this._isPlaying) {
@@ -113,13 +124,6 @@ export class AudioPlayerBase<
 				});
 			}
 		};
-	}
-
-	constructor() {
-		super();
-		this._audioContext = new (globalObject.AudioContext ||
-			globalObject.webkitAudioContext)();
-		this._buffer = new Buffer(this._audioContext);
 	}
 
 	protected renderAudioHeader(
