@@ -11,6 +11,7 @@ import Router from '@dojo/framework/routing/Router';
 const modules = [
 	'',
 	'accordion-pane',
+	'audio-player',
 	'button',
 	'calendar',
 	'checkbox',
