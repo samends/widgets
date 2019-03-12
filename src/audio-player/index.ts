@@ -115,11 +115,13 @@ export class AudioPlayerBase<
 				// If we are re-playing the track from pause
 			} else if (this._track === index + 1) {
 				this._startTrack(url, index, this._pauseTime).then(() => {
+					this._clearTrackTimeout();
 					this._startTrackTimeout(audioData);
 				});
 				// If this is a new track
 			} else {
 				this._startTrack(url, index, 0).then(() => {
+					this._clearTrackTimeout();
 					this._startTrackTimeout(audioData);
 				});
 			}
@@ -135,15 +137,17 @@ export class AudioPlayerBase<
 	) {
 		if (this._track !== 0) {
 			const currentAudio = audioData[this._track - 1];
-			return v('div', [
+			return v('div', {
+				classes: this.theme(css.audioHeader)
+			}, [
 				v(
 					'span',
 					{
 						key: 'currentTrack'
 					},
 					[
-						v('span', [currentAudio.title]),
-						v('span', [currentAudio.artist])
+						v('span', [`${currentAudio.title} - `]),
+						v('span', [`${currentAudio.artist} - `])
 					]
 				),
 				v(
@@ -155,14 +159,16 @@ export class AudioPlayerBase<
 				)
 			]);
 		} else {
-			return v('div', ['No songs playing']);
+			return v('div', {
+				classes: this.theme(css.audioHeader)
+			}, ['No songs playing']);
 		}
 	}
 
 	protected render() {
 		const { audioData } = this.properties;
 
-		const audioContainers: VNode[] = audioData.map((audio, i, data) =>
+		const audioRows: VNode[] = audioData.map((audio, i, data) =>
 			v(
 				'div',
 				{
@@ -209,9 +215,16 @@ export class AudioPlayerBase<
 				v(
 					'div',
 					{
+						classes: this.theme(css.headerRow)
+					},
+					[v('span'), v('span', ['Artist']), v('span', ['Title'])]
+				),
+				v(
+					'div',
+					{
 						classes: this.theme(css.audioContainer)
 					},
-					audioContainers
+					audioRows
 				)
 			]
 		);

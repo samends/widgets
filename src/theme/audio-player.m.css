@@ -21,6 +21,21 @@
 	transition: background-color 0.4s;
 }
 
+.headerRow {
+	display: grid;
+	grid-template-columns: 4em 1fr 2fr;
+	justify-content: end;
+	align-items: center;
+	justify-items: start;
+	background-color: #6d6d6d;
+	padding: .3em 1em;
+	color: #fff;
+}
+
+.audioHeader {
+	padding: 1em 0em;
+}
+
 .audioButton {
 	height: 3.5em;
 	border-radius: 50%;
