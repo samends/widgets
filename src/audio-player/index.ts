@@ -206,7 +206,6 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 
 	protected render() {
 		const { audioData } = this.properties;
-
 		const audioRows: VNode[] = audioData.map((audio, i, data) =>
 			v(
 				'div',
@@ -228,7 +227,7 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 									this.theme(css.playIcon),
 									this._track === i + 1 && this._isPlaying
 										? this.theme(css.paused)
-										: ''
+										: null
 								]
 							})
 						]
