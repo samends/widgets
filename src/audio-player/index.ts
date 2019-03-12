@@ -35,9 +35,7 @@ export const ThemedBase = ThemedMixin(WidgetBase);
 	properties: ['theme', 'classes', 'extraClasses', 'audioData'],
 	events: ['onStart', 'onStop']
 })
-export class AudioPlayerBase<
-	P extends AudioPlayerProperties = AudioPlayerProperties
-> extends ThemedBase<P> {
+export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProperties> extends ThemedBase<P> {
 	private _audioContext: AudioContext = {} as AudioContext;
 	private _buffer: Buffer = {} as Buffer;
 
@@ -112,9 +110,15 @@ export class AudioPlayerBase<
 			this._instantiateAudioContext();
 			const url = audioData[index].url;
 			if (this._track === index + 1 && this._isPlaying) {
+				if (this.properties.onStop) {
+					this.properties.onStop();
+				}
 				this._pauseTrack(index);
 				this._clearTrackTimeout();
 			} else {
+				if (this.properties.onStart) {
+					this.properties.onStart();
+				}
 				this._loading = true;
 				// Are we re plauing the track or playing a new one?
 				const startTime = (this._track === index + 1) ? this._pauseTime : 0;
