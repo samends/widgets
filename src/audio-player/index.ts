@@ -211,6 +211,10 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 			)
 		);
 
+		if (audioData.length === 0) {
+			return v('div', ['No songs available']);
+		}
+
 		return v(
 			'div',
 			{
