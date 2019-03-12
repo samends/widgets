@@ -111,22 +111,14 @@ export class AudioPlayerBase<
 		return () => {
 			this._instantiateAudioContext();
 			const url = audioData[index].url;
-			// If we are pausing the track
 			if (this._track === index + 1 && this._isPlaying) {
 				this._pauseTrack(index);
 				this._clearTrackTimeout();
-				// If we are re-playing the track from pause
-			} else if (this._track === index + 1) {
-				this._loading = true;
-				this._startTrack(url, index, this._pauseTime).then(() => {
-					this._clearTrackTimeout();
-					this._startTrackTimeout(audioData);
-					this._loading = false;
-				});
-				// If this is a new track
 			} else {
 				this._loading = true;
-				this._startTrack(url, index, 0).then(() => {
+				// Are we re plauing the track or playing a new one?
+				const startTime = (this._track === index + 1) ? this._pauseTime : 0;
+				this._startTrack(url, index, startTime).then(() => {
 					this._clearTrackTimeout();
 					this._startTrackTimeout(audioData);
 					this._loading = false;
