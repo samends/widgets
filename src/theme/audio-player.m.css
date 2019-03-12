@@ -72,3 +72,11 @@
 .audioButton:hover .playIcon {
 	border-color: transparent transparent transparent #404040;
 }
+
+/* .audioButton .disabledIcon {
+	border-color: transparent transparent transparent #b7b7b7;
+}
+
+.audioButton:hover .disabledIcon {
+	border-color: transparent transparent transparent #b7b7b7;
+} */

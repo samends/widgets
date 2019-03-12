@@ -6,3 +6,4 @@ export const audioHeader: string;
 export const audioButton: string;
 export const playIcon: string;
 export const paused: string;
+export const disabledIcon: string;

@@ -50,6 +50,7 @@ export class AudioPlayerBase<
 	@watch() private _pauseTime = 0;
 	@watch() private _startTime = 0;
 	@watch() private _track = 0;
+	@watch() private _loading = false;
 
 	private _clearTrackTimeout() {
 		clearTimeout(this._trackTimeout);
@@ -58,7 +59,9 @@ export class AudioPlayerBase<
 	// Instantiates audio context, audio context can only be instantiated after a user interaction
 	// https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
 	private _instantiateAudioContext() {
-		if (Object.keys(Object.getPrototypeOf(this._audioContext)).length === 0) {
+		if (
+			Object.keys(Object.getPrototypeOf(this._audioContext)).length === 0
+		) {
 			this._audioContext = new (globalObject.AudioContext ||
 				globalObject.webkitAudioContext)();
 			this._buffer = new Buffer(this._audioContext);
@@ -114,15 +117,19 @@ export class AudioPlayerBase<
 				this._clearTrackTimeout();
 				// If we are re-playing the track from pause
 			} else if (this._track === index + 1) {
+				this._loading = true;
 				this._startTrack(url, index, this._pauseTime).then(() => {
 					this._clearTrackTimeout();
 					this._startTrackTimeout(audioData);
+					this._loading = false;
 				});
 				// If this is a new track
 			} else {
+				this._loading = true;
 				this._startTrack(url, index, 0).then(() => {
 					this._clearTrackTimeout();
 					this._startTrackTimeout(audioData);
+					this._loading = false;
 				});
 			}
 		};
@@ -137,31 +144,39 @@ export class AudioPlayerBase<
 	) {
 		if (this._track !== 0) {
 			const currentAudio = audioData[this._track - 1];
-			return v('div', {
-				classes: this.theme(css.audioHeader)
-			}, [
-				v(
-					'span',
-					{
-						key: 'currentTrack'
-					},
-					[
-						v('span', [`${currentAudio.title} - `]),
-						v('span', [`${currentAudio.artist} - `])
-					]
-				),
-				v(
-					'span',
-					{
-						key: 'duration'
-					},
-					[`Duration ${this._duration}`]
-				)
-			]);
+			return v(
+				'div',
+				{
+					classes: this.theme(css.audioHeader)
+				},
+				[
+					v(
+						'span',
+						{
+							key: 'currentTrack'
+						},
+						[
+							v('span', [`${currentAudio.title} - `]),
+							v('span', [`${currentAudio.artist} - `])
+						]
+					),
+					v(
+						'span',
+						{
+							key: 'duration'
+						},
+						[`Duration ${this._duration}`]
+					)
+				]
+			);
 		} else {
-			return v('div', {
-				classes: this.theme(css.audioHeader)
-			}, ['No songs playing']);
+			return v(
+				'div',
+				{
+					classes: this.theme(css.audioHeader)
+				},
+				['No songs playing']
+			);
 		}
 	}
 
@@ -180,7 +195,8 @@ export class AudioPlayerBase<
 						'button',
 						{
 							classes: this.theme(css.audioButton),
-							onclick: this._toggleSound(i, data)
+							onclick: this._toggleSound(i, data),
+							disabled: this._loading
 						},
 						[
 							v('div', {
