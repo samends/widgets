@@ -19,6 +19,9 @@ import * as css from '../theme/audio-player.m.css';
  *
  * Properties that can be set on AudioPlayer components
  *
+ * @property audioData     Audio data for the widget to load
+ * @property onStart       Called when track is played
+ * @property onStop        Called when track is stopped
  */
 
 export interface AudioPlayerProperties extends ThemedProperties {
@@ -77,17 +80,24 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 		url: string,
 		index: number,
 		startTime: number = 0
-	): Promise<void> {
+	): Promise<{
+		track: number,
+		duration: number,
+		startTime: number,
+		isPlaying: boolean,
+		pauseTime: number
+	}> {
 		return new Promise((res, reject) => {
 			this._buffer
 				.play(url, index, startTime)
 				.then(({ duration }) => {
-					this._track = index + 1;
-					this._duration = duration;
-					this._startTime = this._audioContext.currentTime;
-					this._isPlaying = true;
-					this._pauseTime = startTime;
-					res();
+					res({
+						track: index + 1,
+						duration,
+						startTime: this._audioContext.currentTime,
+						isPlaying: true,
+						pauseTime: startTime
+					});
 				})
 				.catch((error: Error) => {
 					reject(error);
@@ -100,7 +110,11 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 			if (audioData[this._track]) {
 				this._toggleSound(this._track, audioData)();
 			} else {
+				this._duration = 0;
 				this._isPlaying = false;
+				this._pauseTime = 0;
+				this._startTime = 0;
+				this._track = 0;
 			}
 		}, (this._duration - this._pauseTime) * 1000);
 	}
@@ -122,7 +136,21 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 				this._loading = true;
 				// Are we re plauing the track or playing a new one?
 				const startTime = (this._track === index + 1) ? this._pauseTime : 0;
-				this._startTrack(url, index, startTime).then(() => {
+				this._startTrack(url, index, startTime).then((res) => {
+					const {
+						track,
+						duration,
+						startTime,
+						isPlaying,
+						pauseTime
+					} = res;
+
+					this._track = track;
+					this._duration = duration;
+					this._startTime = startTime;
+					this._isPlaying = isPlaying;
+					this._pauseTime = pauseTime;
+
 					this._clearTrackTimeout();
 					this._startTrackTimeout(audioData);
 					this._loading = false;
@@ -233,7 +261,11 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 					{
 						classes: this.theme(css.headerRow)
 					},
-					[v('span'), v('span', ['Artist']), v('span', ['Title'])]
+					[
+						v('span'),
+						v('span', ['Artist']),
+						v('span', ['Title'])
+					]
 				),
 				v(
 					'div',
