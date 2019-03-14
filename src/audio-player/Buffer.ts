@@ -1,4 +1,7 @@
+import fetch from '@dojo/framework/shim/fetch';
+
 export class Buffer {
+	private _fetch: any;
 	private _sourceData: { [key: number]: AudioBufferSourceNode } = {};
 	private _bufferData: { [key: number]: AudioBuffer } = {};
 
@@ -33,8 +36,8 @@ export class Buffer {
 				res(this._bufferData[index]);
 			} else {
 				fetch(url)
-					.then(response => response.arrayBuffer())
-					.then(buffer => {
+					.then((response: Response) => response.arrayBuffer())
+					.then((buffer: ArrayBuffer) => {
 						this._context.decodeAudioData(
 							buffer,
 							(decodedBuffer: AudioBuffer) => {
@@ -45,7 +48,7 @@ export class Buffer {
 							}
 						);
 					})
-					.catch(error => {
+					.catch((error: Error) => {
 						reject(error);
 					});
 			}
@@ -56,3 +59,5 @@ export class Buffer {
 		this._sourceData[index].stop();
 	}
 }
+
+export default Buffer;
