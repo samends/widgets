@@ -1,6 +1,4 @@
 import { Buffer } from './Buffer';
-
-import globalObject from '@dojo/framework/shim/global';
 import { WidgetBase } from '@dojo/framework/widget-core/WidgetBase';
 import { v } from '@dojo/framework/widget-core/d';
 import { customElement } from '@dojo/framework/widget-core/decorators/customElement';
@@ -12,6 +10,7 @@ import {
 	theme
 } from '@dojo/framework/widget-core/mixins/Themed';
 
+import { getAudioContext } from './util/shims';
 import * as css from '../theme/audio-player.m.css';
 
 /**
@@ -51,7 +50,7 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 	@watch() private _pauseTime = 0;
 	@watch() private _startTime = 0;
 	@watch() private _track = 0;
-	@watch() private _loading = false;
+	@watch() private _isLoading = false;
 
 	private _clearTrackTimeout() {
 		clearTimeout(this._trackTimeout);
@@ -63,8 +62,7 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 		if (
 			Object.keys(Object.getPrototypeOf(this._audioContext)).length === 0
 		) {
-			this._audioContext = new (globalObject.AudioContext ||
-				globalObject.webkitAudioContext)();
+			this._audioContext = getAudioContext();
 			this._buffer = new Buffer(this._audioContext);
 		}
 	}
@@ -122,7 +120,6 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 	private _toggleSound(index: number, audioData: AudioData[]) {
 		return () => {
 			this._instantiateAudioContext();
-			const url = audioData[index].url;
 			if (this._track === index + 1 && this._isPlaying) {
 				if (this.properties.onStop) {
 					this.properties.onStop();
@@ -130,13 +127,10 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 				this._pauseTrack(index);
 				this._clearTrackTimeout();
 			} else {
-				if (this.properties.onStart) {
-					this.properties.onStart();
-				}
-				this._loading = true;
+				this._isLoading = true;
 				// Are we re plauing the track or playing a new one?
 				const startTime = (this._track === index + 1) ? this._pauseTime : 0;
-				this._startTrack(url, index, startTime).then((res) => {
+				this._startTrack(audioData[index].url, index, startTime).then((res) => {
 					const {
 						track,
 						duration,
@@ -151,9 +145,13 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 					this._isPlaying = isPlaying;
 					this._pauseTime = pauseTime;
 
+					if (this.properties.onStart) {
+						this.properties.onStart();
+					}
+
 					this._clearTrackTimeout();
 					this._startTrackTimeout(audioData);
-					this._loading = false;
+					this._isLoading = false;
 				});
 			}
 		};
@@ -171,7 +169,8 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 			return v(
 				'div',
 				{
-					classes: this.theme(css.audioHeader)
+					classes: this.theme(css.audioHeader),
+					key: 'audioHeader'
 				},
 				[
 					v(
@@ -211,7 +210,7 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 				'div',
 				{
 					classes: this.theme(css.audioRow),
-					key: i
+					key: `audioRow${i}`
 				},
 				[
 					v(
@@ -219,7 +218,8 @@ export class AudioPlayerBase<P extends AudioPlayerProperties = AudioPlayerProper
 						{
 							classes: this.theme(css.audioButton),
 							onclick: this._toggleSound(i, data),
-							disabled: this._loading
+							disabled: this._isLoading,
+							key: `playButton${i}`
 						},
 						[
 							v('div', {
