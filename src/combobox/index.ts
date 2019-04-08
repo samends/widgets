@@ -10,6 +10,7 @@ import { WidgetBase } from '@dojo/framework/widget-core/WidgetBase';
 import { uuid } from '@dojo/framework/core/util';
 import { v, w } from '@dojo/framework/widget-core/d';
 
+import HelperText from '../helper-text/index';
 import Icon from '../icon/index';
 import Label from '../label/index';
 import Listbox from '../listbox/index';
@@ -55,6 +56,7 @@ export interface ComboBoxProperties extends ThemedProperties, LabeledProperties,
 	getResultSelected?(result: any): boolean;
 	getResultValue?(result: any): string;
 	widgetId?: string;
+	helperText?: string;
 	inputProperties?: TextInputProperties;
 	invalid?: boolean;
 	isResultDisabled?(result: any): boolean;
@@ -454,6 +456,7 @@ export class ComboBox extends I18nMixin(ThemedMixin(FocusMixin(WidgetBase)))<Com
 		const {
 			clearable = false,
 			widgetId = this._idBase,
+			helperText,
 			invalid,
 			label,
 			readOnly,
@@ -492,17 +495,20 @@ export class ComboBox extends I18nMixin(ThemedMixin(FocusMixin(WidgetBase)))<Com
 				clearable ? this.renderClearButton(messages) : null,
 				this.renderMenuButton(messages)
 			]),
-			menu
+			menu,
+			helperText ? w(HelperText, { text: helperText }) : null
 		];
 
-		return v('div', {
-			'aria-expanded': this._open ? 'true' : 'false',
-			'aria-haspopup': 'listbox',
-			'aria-required': required ? 'true' : null,
-			classes: this.theme(this.getRootClasses()),
-			key: 'root',
-			role: 'combobox'
-		}, labelAfter ? controls.reverse() : controls);
+		return v('div', [
+			v('div', {
+				'aria-expanded': this._open ? 'true' : 'false',
+				'aria-haspopup': 'listbox',
+				'aria-required': required ? 'true' : null,
+				classes: this.theme(this.getRootClasses()),
+				key: 'root',
+				role: 'combobox'
+			}, labelAfter ? controls.reverse() : controls)
+		]);
 	}
 }
 

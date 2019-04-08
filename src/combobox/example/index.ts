@@ -177,6 +177,7 @@ export default class App extends WidgetBase {
 			w(ComboBox, {
 				key: '9',
 				label: 'Combo:',
+				helperText: 'helper text',
 				required: true,
 				onChange: (value: string) => {
 					this._value9 = value;
@@ -191,6 +192,16 @@ export default class App extends WidgetBase {
 				inputProperties: {
 					placeholder: 'Enter a value'
 				}
+			}),
+			v('h3', ['Helper Text']),
+			w(ComboBox, {
+				key: '8',
+				onChange,
+				getResultLabel: (result: any) => result.value,
+				onRequestResults,
+				results: this._results,
+				value: this._value8,
+				helperText: 'helper text'
 			})
 		]);
 	}

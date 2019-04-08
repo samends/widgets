@@ -6,6 +6,7 @@ import { v, w } from '@dojo/framework/widget-core/d';
 import Focus from '@dojo/framework/widget-core/meta/Focus';
 import { Keys } from '../../../common/util';
 
+import HelperText from '../../../helper-text/index';
 import ComboBox from '../../index';
 import Icon from '../../../icon/index';
 import Label from '../../../label/index';
@@ -51,7 +52,8 @@ const testProperties = {
 	label: 'foo',
 	results: testOptions,
 	value: 'one',
-	theme: {}
+	theme: {},
+	helperText: 'helper text'
 };
 
 interface States {
@@ -161,40 +163,43 @@ const getExpectedMenu = function(useTestProperties: boolean, open: boolean, over
 	]);
 };
 
-const getExpectedVdom = function(useTestProperties = false, open = false, label = false, states: States = {}, focused = false) {
+const getExpectedVdom = function(useTestProperties = false, open = false, label = false, states: States = {}, focused = false, helperText = false) {
 	const menuVdom = getExpectedMenu(useTestProperties, open);
 	const controlsVdom = getExpectedControls(useTestProperties, label, states);
 	const { disabled, invalid, readOnly, required } = states;
 
-	return v('div', {
-		'aria-expanded': open ? 'true' : 'false',
-		'aria-haspopup': 'listbox',
-		'aria-required': null,
-		classes: [
-			css.root,
-			open ? css.open : null,
-			useTestProperties ? css.clearable : null,
-			focused ? css.focused : null,
-			null,
-			null
-		],
-		key: 'root',
-		role: 'combobox'
-	}, [
-		label ? w(Label, {
-			key: 'label',
-			theme: useTestProperties ? {} : undefined,
-			classes: undefined,
-			disabled,
-			focused,
-			hidden: undefined,
-			invalid,
-			readOnly,
-			required,
-			forId: useTestProperties ? 'foo' : ''
-		}, [ 'foo' ]) : null,
-		controlsVdom,
-		menuVdom
+	return v('div', [
+		v('div', {
+			'aria-expanded': open ? 'true' : 'false',
+			'aria-haspopup': 'listbox',
+			'aria-required': null,
+			classes: [
+				css.root,
+				open ? css.open : null,
+				useTestProperties ? css.clearable : null,
+				focused ? css.focused : null,
+				null,
+				null
+			],
+			key: 'root',
+			role: 'combobox'
+		}, [
+			label ? w(Label, {
+				key: 'label',
+				theme: useTestProperties ? {} : undefined,
+				classes: undefined,
+				disabled,
+				focused,
+				hidden: undefined,
+				invalid,
+				readOnly,
+				required,
+				forId: useTestProperties ? 'foo' : ''
+			}, [ 'foo' ]) : null,
+			controlsVdom,
+			menuVdom,
+			helperText ? w(HelperText, { text: 'helper text' }) : null
+		])
 	]);
 };
 
@@ -207,13 +212,13 @@ registerSuite('ComboBox', {
 
 		'renders with custom properties'() {
 			const h = harness(() => w(ComboBox, testProperties), [ compareFocusFalse ]);
-			h.expect(() => getExpectedVdom(true, false, true));
+			h.expect(() => getExpectedVdom(true, false, true, {}, false, true));
 		},
 
 		'dropdown renders correctly when open'() {
 			const h = harness(() => w(ComboBox, testProperties), [ compareFocusTrue ]);
 			h.trigger(`.${css.trigger}`, 'onclick', stubEvent);
-			h.expect(() => getExpectedVdom(true, true, true, {}));
+			h.expect(() => getExpectedVdom(true, true, true, {}, false, true));
 		},
 
 		'arrow click opens menu'() {
@@ -225,7 +230,7 @@ registerSuite('ComboBox', {
 				onMenuChange
 			}), [ compareFocusTrue ]);
 			h.trigger(`.${css.trigger}`, 'onclick', stubEvent);
-			h.expect(() => getExpectedVdom(true, true, true, {}));
+			h.expect(() => getExpectedVdom(true, true, true, {}, false, true));
 			assert.isTrue(onRequestResults.calledOnce, 'onRequestResults called when menu is opened');
 			assert.isTrue(onMenuChange.calledOnce, 'onMenuChange called when menu is opened');
 		},
@@ -266,7 +271,7 @@ registerSuite('ComboBox', {
 			h.expectPartial('@dropdown', () => getExpectedMenu(true, true));
 
 			h.trigger('@textinput', 'onBlur', 'foo');
-			h.expect(() => getExpectedVdom(true, false, true));
+			h.expect(() => getExpectedVdom(true, false, true, {}, false, true));
 			assert.isTrue(onBlur.calledWith('foo'), 'onBlur callback called with input value');
 			assert.isTrue(onMenuChange.calledTwice, 'onMenuChange called twice');
 		},
@@ -303,7 +308,7 @@ registerSuite('ComboBox', {
 			h.trigger('@listbox', 'onOptionSelect', testOptions[1], 1);
 			assert.isTrue(onChange.calledWith('Two'), 'onChange callback called with label of second option');
 			assert.isTrue(onResultSelect.calledWith(testOptions[1]), 'onResultSelect callback called with second option');
-			h.expect(() => getExpectedVdom(true, false, true, {}));
+			h.expect(() => getExpectedVdom(true, false, true, {}, false, true));
 		},
 
 		'keyboard opens and closes menu'() {
@@ -320,7 +325,7 @@ registerSuite('ComboBox', {
 			assert.isTrue(preventDefault.calledOnce, 'down key press prevents default page scroll');
 
 			h.trigger('@textinput', 'onKeyDown', Keys.Escape, preventDefault);
-			h.expect(() => getExpectedVdom(true, false, true));
+			h.expect(() => getExpectedVdom(true, false, true, {}, false, true));
 		},
 
 		'listbox onActiveIndexChange'() {
@@ -362,7 +367,7 @@ registerSuite('ComboBox', {
 
 			assert.isTrue(onChange.calledWith('One'), 'enter triggers onChange callback called with label of first option');
 			assert.isTrue(onResultSelect.calledWith(testOptions[0]), 'enter triggers onResultSelect callback called with first option');
-			h.expect(() => getExpectedVdom(true, false, true, {}));
+			h.expect(() => getExpectedVdom(true, false, true, {}, false, true));
 
 			h.trigger('@textinput', 'onKeyDown', Keys.Enter, () => {});
 			assert.isFalse(onChange.calledTwice, 'enter does not trigger onChange when menu is closed');
@@ -373,7 +378,7 @@ registerSuite('ComboBox', {
 			h.trigger('@textinput', 'onKeyDown', Keys.Space, () => {});
 			assert.isTrue(onChange.calledWith('One'), 'space triggers onChange callback called with label of first option');
 			assert.isTrue(onResultSelect.calledWith(testOptions[0]), 'space triggers onResultSelect callback called with first option');
-			h.expect(() => getExpectedVdom(true, false, true, {}));
+			h.expect(() => getExpectedVdom(true, false, true, {}, false, true));
 		},
 
 		'disabled options are not selected'() {
@@ -604,9 +609,9 @@ registerSuite('ComboBox', {
 			}));
 
 			h.trigger(`.${css.trigger}`, 'onclick', stubEvent);
-			h.expect(() => getExpectedVdom(true, false, true, { disabled: true }));
+			h.expect(() => getExpectedVdom(true, false, true, { disabled: true }, false, true));
 			h.trigger('@textinput', 'onKeyDown', Keys.Down, () => {});
-			h.expect(() => getExpectedVdom(true, false, true, { disabled: true }));
+			h.expect(() => getExpectedVdom(true, false, true, { disabled: true }, false, true));
 			assert.isFalse(onMenuChange.called, 'onMenuChange never called');
 			assert.isFalse(onRequestResults.called, 'onRequestResults never called');
 		},
@@ -622,9 +627,9 @@ registerSuite('ComboBox', {
 			}));
 
 			h.trigger(`.${css.trigger}`, 'onclick', stubEvent);
-			h.expect(() => getExpectedVdom(true, false, true, { readOnly: true }));
+			h.expect(() => getExpectedVdom(true, false, true, { readOnly: true }, false, true));
 			h.trigger('@textinput', 'onKeyDown', Keys.Down, () => {});
-			h.expect(() => getExpectedVdom(true, false, true, { readOnly: true }));
+			h.expect(() => getExpectedVdom(true, false, true, { readOnly: true }, false, true));
 
 			assert.isFalse(onMenuChange.called, 'onMenuChange never called');
 			assert.isFalse(onRequestResults.called, 'onRequestResults never called');
@@ -633,7 +638,7 @@ registerSuite('ComboBox', {
 		'hover and keyboard events toggle visualFocus'() {
 			const preventDefault = sinon.stub();
 			const h = harness(() => w(ComboBox, { ...testProperties }));
-			h.expect(() =>  getExpectedVdom(true, false, true));
+			h.expect(() =>  getExpectedVdom(true, false, true, {}, false, true));
 			h.trigger(`.${css.trigger}`, 'onclick', stubEvent);
 			h.trigger('@textinput', 'onKeyDown', Keys.Up, preventDefault);
 			h.trigger('@textinput', 'onKeyDown', Keys.Down, preventDefault);
