@@ -225,7 +225,21 @@ export default class App extends ThemedMixin(WidgetBase) {
 					label: 'foo',
 					value: this._values['10']
 				})
-			])
+			]),
+
+			v('h3', [ 'Helper Text' ]),
+			v('div', { id: 'example-labeled' }, [
+				w(TimePicker, {
+					key: '6',
+					helperText: 'helper text',
+					inputProperties: {
+						aria: { describedBy: 'description1' }
+					},
+					onChange: this.onChange,
+					step: 1800,
+					value: this._values['6']
+				})
+			]),
 		]);
 	}
 }

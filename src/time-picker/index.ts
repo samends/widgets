@@ -15,6 +15,7 @@ import Label from '../label/index';
 import { uuid } from '@dojo/framework/core/util';
 import * as css from '../theme/time-picker.m.css';
 import { customElement } from '@dojo/framework/widget-core/decorators/customElement';
+import HelperText from '../helper-text/index';
 
 interface FocusInputEvent extends FocusEvent {
 	target: HTMLInputElement;
@@ -50,6 +51,7 @@ export interface TimePickerProperties extends ThemedProperties, FocusProperties,
 	clearable?: boolean;
 	end?: string;
 	getOptionLabel?(option: TimeUnits): string;
+	helperText?: string;
 	inputProperties?: TextInputProperties;
 	isOptionDisabled?(result: any): boolean;
 	onBlur?(value: string, key?: string | number): void;
@@ -394,7 +396,7 @@ export class TimePicker extends ThemedMixin(FocusMixin(WidgetBase))<TimePickerPr
 				step,
 				type: 'time',
 				value
-			})
+			}),
 		];
 
 		return v('div', {
@@ -404,9 +406,12 @@ export class TimePicker extends ThemedMixin(FocusMixin(WidgetBase))<TimePickerPr
 	}
 
 	render(): DNode {
-		const { useNativeElement } = this.properties;
+		const { useNativeElement, helperText, } = this.properties;
 
-		return useNativeElement ? this.renderNativeInput() : this.renderCustomInput();
+		return v('div', [
+			useNativeElement ? this.renderNativeInput() : this.renderCustomInput(),
+			helperText ? w(HelperText, {text: helperText}) : null
+		]);
 	}
 }
 
