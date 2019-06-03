@@ -17,7 +17,7 @@ export default class App extends ThemedMixin(WidgetBase) {
 	private _options: TimeUnits[] = getOptions();
 	private _filteredOptions: TimeUnits[] = [];
 	private _values: any = {};
-	private _invalid = false;
+	private _valid = { valid: false, message: 'This input is invalid' };
 
 	getFilteredOptions(key: string | number) {
 		const value = this._values[key];
@@ -149,22 +149,23 @@ export default class App extends ThemedMixin(WidgetBase) {
 				})
 			]),
 
-			v('h3', ['Required and validated']),
+			v('h3', ['Required, helpertext, and validated']),
 			v('div', { id: 'example-required-validated' }, [
 				w(TimePicker, {
 					inputProperties: {
 						aria: { describedBy: 'description1' },
 						placeholder: 'Enter a value'
 					},
-					invalid: this._invalid,
+					valid: this._valid,
 					key: '7',
 					required: true,
+					helperText: 'Input a valid time',
 					onBlur: (value: string) => {
-						this._invalid = value.trim().length === 0;
+						this._valid.valid = value.trim().length !== 0;
 						this.invalidate();
 					},
 					onChange: (value: string, key: string | number) => {
-						this._invalid = value.trim().length === 0;
+						this._valid.valid = value.trim().length !== 0;
 						this.onChange(value, key);
 					},
 					label: 'Time: ',

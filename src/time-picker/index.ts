@@ -31,6 +31,7 @@ interface FocusInputEvent extends FocusEvent {
  * @property CustomOptionMenu   Can be used to render a custom option menu
  * @property end                The maximum time to display in the menu (defaults to '23:59:59')
  * @property getOptionLabel     Can be used to get the text label of an option based on the underlying option object
+ * @property helpertext			Displays text at bottom of widget
  * @property inputProperties    TextInput properties to set on the underlying input
  * @property isOptionDisabled   Used to determine if an item should be disabled
  * @property onBlur             Called when the input is blurred
@@ -43,7 +44,8 @@ interface FocusInputEvent extends FocusEvent {
  * @property start              The minimum time to display in the menu (defaults to '00:00:00')
  * @property step               The number of seconds between each option in the menu (defaults to 60)
  * @property useNativeElement   Use the native <input type="time"> element if true
- * @property value           The current value
+ * @property value              The current value
+ * @property valid			    Boolean or object that will invalidate text input and optionally display invalid message instead of helpertext
  */
 export interface TimePickerProperties
 	extends ThemedProperties,
@@ -54,6 +56,7 @@ export interface TimePickerProperties
 	clearable?: boolean;
 	end?: string;
 	getOptionLabel?(option: TimeUnits): string;
+	helperText?: string;
 	inputProperties?: TextInputProperties;
 	isOptionDisabled?(result: any): boolean;
 	onBlur?(value: string, key?: string | number): void;
@@ -67,6 +70,7 @@ export interface TimePickerProperties
 	step?: number;
 	useNativeElement?: boolean;
 	value?: string;
+	valid?: boolean | { valid: boolean; message: string };
 }
 
 /**
@@ -173,6 +177,7 @@ export function parseUnits(value: string | TimeUnits): TimeUnits {
 		'extraClasses',
 		'isOptionDisabled',
 		'getOptionLabel',
+		'helperText',
 		'autoBlur',
 		'clearable',
 		'inputProperties',
@@ -183,9 +188,9 @@ export function parseUnits(value: string | TimeUnits): TimeUnits {
 		'labelAfter',
 		'labelHidden',
 		'required',
-		'invalid',
 		'readOnly',
-		'disabled'
+		'disabled',
+		'valid'
 	],
 	attributes: ['widgetId', 'label', 'name', 'value', 'start', 'end'],
 	events: ['onBlur', 'onChange', 'onFocus', 'onMenuChange', 'onRequestOptions']
@@ -262,7 +267,6 @@ export class TimePicker extends ThemedMixin(FocusMixin(WidgetBase))<TimePickerPr
 			css.root,
 			disabled ? css.disabled : null,
 			focus.containsFocus ? css.focused : null,
-			invalid ? css.invalid : null,
 			readOnly ? css.readonly : null,
 			required ? css.required : null
 		];
@@ -292,7 +296,7 @@ export class TimePicker extends ThemedMixin(FocusMixin(WidgetBase))<TimePickerPr
 			extraClasses,
 			widgetId = this._uuid,
 			inputProperties,
-			invalid,
+			helperText,
 			isOptionDisabled,
 			label,
 			labelAfter,
@@ -303,7 +307,8 @@ export class TimePicker extends ThemedMixin(FocusMixin(WidgetBase))<TimePickerPr
 			required,
 			theme,
 			classes,
-			value
+			value,
+			valid
 		} = this.properties;
 
 		return w(ComboBox, {
@@ -312,10 +317,11 @@ export class TimePicker extends ThemedMixin(FocusMixin(WidgetBase))<TimePickerPr
 			disabled,
 			extraClasses,
 			getResultLabel: this._getOptionLabel.bind(this),
+			helperText,
 			widgetId,
 			focus: this.shouldFocus,
 			inputProperties,
-			valid: !invalid,
+			valid: valid,
 			isResultDisabled: isOptionDisabled,
 			label,
 			labelAfter,
