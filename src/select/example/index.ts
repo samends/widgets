@@ -51,7 +51,7 @@ export default class App extends WidgetBase {
 		}
 	];
 
-	_evenMoreSelectOptions = ['Maru', 'Garfield', 'Grumpy Cat', 'Hobbes'];
+	_evenMoreSelectOptions = ['', 'Maru', 'Garfield', 'Grumpy Cat', 'Hobbes'];
 
 	getOptionSettings(): Partial<SelectProperties> {
 		return {

@@ -12,6 +12,7 @@
 
 .option {
 	cursor: pointer;
+	height: 28px;
 }
 
 .focused .activeOption,
