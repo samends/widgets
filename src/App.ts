@@ -80,8 +80,10 @@ let themes: ThemeOption[] = [
 	{ label: 'dojo', value: dojoTheme }
 ];
 
+const routes = [{ path: '{module}', outlet: 'module' }];
+
 const registry = new Registry();
-registerRouterInjector([{ path: '{module}', outlet: 'module' }], registry);
+registerRouterInjector(routes, registry);
 const themeInjector = registerThemeInjector(undefined, registry);
 
 export class App extends WidgetBase {
@@ -92,8 +94,7 @@ export class App extends WidgetBase {
 	private _theme = themes[0].label;
 
 	private _onModuleChange(module: string) {
-		const item = this.registry.getInjector<Router>('router')!;
-		const router = item.injector();
+		const router = new Router(routes);
 		router.setPath(module);
 	}
 
