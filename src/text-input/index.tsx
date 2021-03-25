@@ -37,9 +37,9 @@ export interface BaseInputProperties<T extends { value: any } = { value: string 
 	/** Callback fired when the input is focused */
 	onFocus?(): void;
 	/** Callback fired when a key is pressed down */
-	onKeyDown?(key: number, preventDefault: () => void): void;
+	onKeyDown?(key: string, preventDefault: () => void): void;
 	/** Callback fired when a key is released */
-	onKeyUp?(key: number, preventDefault: () => void): void;
+	onKeyUp?(key: string, preventDefault: () => void): void;
 	/** Callback fired when the input validation changes */
 	onValidate?: (valid: boolean | undefined, message: string) => void;
 	/** Callback fired when the input value changes */
@@ -306,11 +306,11 @@ export const TextInput = factory(function TextInput({
 						}}
 						onkeydown={(event: KeyboardEvent) => {
 							event.stopPropagation();
-							onKeyDown && onKeyDown(event.which, () => event.preventDefault());
+							onKeyDown && onKeyDown(event.key, () => event.preventDefault());
 						}}
 						onkeyup={(event: KeyboardEvent) => {
 							event.stopPropagation();
-							onKeyUp && onKeyUp(event.which, () => event.preventDefault());
+							onKeyUp && onKeyUp(event.key, () => event.preventDefault());
 						}}
 						onclick={() => {
 							onClick && onClick();

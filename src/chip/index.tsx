@@ -62,7 +62,9 @@ export default factory(function Chip({ properties, children, middleware: { theme
 				if (
 					clickable &&
 					onClick &&
-					(event.which === Keys.Enter || event.which === Keys.Space)
+					(event.key === Keys.Enter ||
+						event.key === Keys.Space ||
+						event.key === Keys.SpaceAlt)
 				) {
 					event.preventDefault();
 					onClick();
@@ -82,7 +84,11 @@ export default factory(function Chip({ properties, children, middleware: { theme
 						onClose();
 					}}
 					onkeydown={(event) => {
-						if (event.which === Keys.Enter || event.which === Keys.Space) {
+						if (
+							event.key === Keys.Enter ||
+							event.key === Keys.Space ||
+							event.key === Keys.SpaceAlt
+						) {
 							event.stopPropagation();
 							event.preventDefault();
 							onClose();

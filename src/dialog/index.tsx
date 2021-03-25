@@ -122,7 +122,7 @@ export const Dialog = factory(function Dialog({
 
 	const keyup = (event: KeyboardEvent) => {
 		event.stopPropagation();
-		if (event.which === Keys.Escape) {
+		if (event.key === Keys.Escape || event.key === Keys.EscapeAlt) {
 			close();
 		}
 	};

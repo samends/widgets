@@ -4,20 +4,26 @@ import { isVNode, isWNode } from '@dojo/framework/core/vdom';
 interface AriaPropertyObject {
 	[key: string]: string | null;
 }
-
+/* Alt values to support IE/Edge key values */
 export enum Keys {
-	Down = 40,
-	End = 35,
-	Enter = 13,
-	Escape = 27,
-	Home = 36,
-	Left = 37,
-	PageDown = 34,
-	PageUp = 33,
-	Right = 39,
-	Space = 32,
-	Tab = 9,
-	Up = 38
+	Down = 'ArrowDown',
+	DownAlt = 'Down',
+	End = 'End',
+	Enter = 'Enter',
+	Escape = 'Escape',
+	EscapeAlt = 'Esc',
+	Home = 'Home',
+	Left = 'ArrowLeft',
+	LeftAlt = 'Left',
+	PageDown = 'PageDown',
+	PageUp = 'PageUp',
+	Right = 'ArrowRight',
+	RightAlt = 'Right',
+	Space = ' ',
+	SpaceAlt = 'Spacebar',
+	Tab = 'Tab',
+	Up = 'ArrowUp',
+	UpAlt = 'Up'
 }
 
 export function formatAriaProperties(aria: AriaPropertyObject): AriaPropertyObject {

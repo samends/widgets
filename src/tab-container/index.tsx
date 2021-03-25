@@ -85,19 +85,24 @@ export const TabContainer = factory(function TabContainer({
 		event.stopPropagation();
 		const total = tabs.length;
 
-		switch (event.which) {
+		switch (event.key) {
 			case Keys.Escape:
+			case Keys.EscapeAlt:
 				if (closeable && !disabled) {
 					closeTab(index);
 				}
 				break;
 			case Keys.Left:
+			case Keys.LeftAlt:
 			case Keys.Up:
+			case Keys.UpAlt:
 				event.preventDefault();
 				setActiveIndex((index - 1 + total) % total);
 				break;
 			case Keys.Right:
+			case Keys.RightAlt:
 			case Keys.Down:
+			case Keys.DownAlt:
 				event.preventDefault();
 				setActiveIndex((index + 1) % total);
 				break;

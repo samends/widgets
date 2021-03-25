@@ -131,7 +131,7 @@ interface CalendarCellProperties {
 	/** Handler for when the cell receives focus */
 	onFocusCalled?(): void;
 	/** Handler for the key down event */
-	onKeyDown?(key: number, preventDefault: () => void): void;
+	onKeyDown?(key: string, preventDefault: () => void): void;
 	/** if the date is outside the min/max */
 	outOfRange?: boolean;
 	/** if the date is currently selected */
@@ -209,7 +209,7 @@ export const CalendarCell = create({ theme }).properties<CalendarCellProperties>
 			event.stopPropagation();
 			const { onKeyDown } = properties();
 			onKeyDown &&
-				onKeyDown(event.which, () => {
+				onKeyDown(event.key, () => {
 					event.preventDefault();
 				});
 		}
@@ -313,9 +313,10 @@ export const DatePicker = create({ theme, focus, icache }).properties<DatePicker
 			event.stopPropagation();
 			// close popup on escape, or if a value is selected with enter/space
 			if (
-				event.which === Keys.Escape ||
-				event.which === Keys.Enter ||
-				event.which === Keys.Space
+				event.key === Keys.Escape ||
+				event.key === Keys.EscapeAlt ||
+				event.key === Keys.Enter ||
+				event.key === Keys.Space
 			) {
 				event.preventDefault();
 				monthPopupOpen && closeMonthPopup();

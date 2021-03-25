@@ -40,10 +40,10 @@ export interface TextAreaProperties {
 	onFocus?(): void;
 
 	/** Handler for when a key is depressed in the element */
-	onKeyDown?(key: number, preventDefault: () => void): void;
+	onKeyDown?(key: string, preventDefault: () => void): void;
 
 	/** Handler for when a key is released in the element */
-	onKeyUp?(key: number, preventDefault: () => void): void;
+	onKeyUp?(key: string, preventDefault: () => void): void;
 
 	/** Handler for when the pointer moves out of the element */
 	onOut?(): void;
@@ -270,7 +270,7 @@ export const TextArea = factory(function TextArea({
 							const { onKeyDown } = properties();
 							event.stopPropagation();
 							onKeyDown &&
-								onKeyDown(event.which, () => {
+								onKeyDown(event.key, () => {
 									event.preventDefault();
 								});
 						}}
@@ -278,7 +278,7 @@ export const TextArea = factory(function TextArea({
 							const { onKeyUp } = properties();
 							event.stopPropagation();
 							onKeyUp &&
-								onKeyUp(event.which, () => {
+								onKeyUp(event.key, () => {
 									event.preventDefault();
 								});
 						}}

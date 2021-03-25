@@ -7,7 +7,7 @@ const factory = create({ icache });
 export default factory(function Basic({ middleware: { icache } }) {
 	const keyup = (event: KeyboardEvent) => {
 		event.stopPropagation();
-		icache.set('keycode', event.which);
+		icache.set('keycode', event.key);
 	};
 
 	return (

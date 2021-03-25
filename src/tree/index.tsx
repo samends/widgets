@@ -176,10 +176,11 @@ export default factory(function Tree({
 		const nodes = createNodeFlatMap();
 		const activeIndex = nodes.findIndex((node) => node.id === activeNode);
 
-		switch (event.which) {
+		switch (event.key) {
 			// select
 			case Keys.Enter:
 			case Keys.Space:
+			case Keys.SpaceAlt:
 				event.preventDefault();
 				if (activeNode && selectedNode !== activeNode && !nodes[activeIndex].hasChildren) {
 					selectable && selectNode(activeNode);
@@ -189,12 +190,14 @@ export default factory(function Tree({
 
 			// next
 			case Keys.Down:
+			case Keys.DownAlt:
 				event.preventDefault();
 				activateNode(nodes[(activeIndex + 1) % nodes.length].id);
 				break;
 
 			// previous
 			case Keys.Up:
+			case Keys.UpAlt:
 				event.preventDefault();
 				if (activeIndex - 1 < 0) {
 					activateNode(nodes[nodes.length - 1].id);
@@ -205,6 +208,7 @@ export default factory(function Tree({
 
 			// expand
 			case Keys.Right:
+			case Keys.RightAlt:
 				event.preventDefault();
 				if (
 					activeNode &&
@@ -217,6 +221,7 @@ export default factory(function Tree({
 
 			// collapse
 			case Keys.Left:
+			case Keys.LeftAlt:
 				event.preventDefault();
 				if (activeNode && expandedNodes.includes(activeNode)) {
 					collapseNode(activeNode);

@@ -344,9 +344,10 @@ export const List = factory(function List({
 		event.stopPropagation();
 		let computedActiveIndex =
 			activeIndex === undefined ? icache.getOrSet('activeIndex', 0) : activeIndex;
-		switch (event.which) {
+		switch (event.key) {
 			case Keys.Enter:
 			case Keys.Space:
+			case Keys.SpaceAlt:
 				event.preventDefault();
 
 				if (activeItem) {
@@ -358,6 +359,7 @@ export const List = factory(function List({
 				}
 				break;
 			case Keys.Down:
+			case Keys.DownAlt:
 				event.preventDefault();
 				if (event.metaKey || event.ctrlKey) {
 					setActiveIndex(total - 1);
@@ -366,6 +368,7 @@ export const List = factory(function List({
 				}
 				break;
 			case Keys.Up:
+			case Keys.UpAlt:
 				event.preventDefault();
 				if (event.metaKey || event.ctrlKey) {
 					setActiveIndex(0);
@@ -374,6 +377,7 @@ export const List = factory(function List({
 				}
 				break;
 			case Keys.Escape:
+			case Keys.EscapeAlt:
 				event.preventDefault();
 				onRequestClose && onRequestClose();
 				break;

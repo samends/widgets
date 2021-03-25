@@ -239,9 +239,11 @@ export const Select = factory(function Select({
 								onclick={openMenu}
 								onkeydown={(event) => {
 									if (
-										event.which === Keys.Down ||
-										event.which === Keys.Space ||
-										event.which === Keys.Enter
+										event.key === Keys.Down ||
+										event.key === Keys.DownAlt ||
+										event.key === Keys.Space ||
+										event.key === Keys.SpaceAlt ||
+										event.key === Keys.Enter
 									) {
 										event.preventDefault();
 										openMenu();
