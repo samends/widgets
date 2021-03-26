@@ -764,29 +764,35 @@ export const Calendar = factory(function Calendar({
 		icache.set('callDateFocus', false);
 	}
 
-	function onDateKeyDown(key: number, preventDefault: () => void) {
+	function onDateKeyDown(key: string, preventDefault: () => void) {
 		const { month, year } = getMonthYear();
 		switch (key) {
 			case Keys.Up:
+			case Keys.UpAlt:
 				preventDefault();
 				goToDate(focusedDay - 7);
 				break;
 			case Keys.Down:
+			case Keys.DownAlt:
 				preventDefault();
 				goToDate(focusedDay + 7);
 				break;
 			case Keys.Left:
+			case Keys.LeftAlt:
 				preventDefault();
 				goToDate(focusedDay - 1);
 				break;
 			case Keys.Right:
+			case Keys.RightAlt:
 				preventDefault();
 				goToDate(focusedDay + 1);
 				break;
+			case Keys.Up:
 			case Keys.PageUp:
 				preventDefault();
 				goToDate(1);
 				break;
+			case Keys.Down:
 			case Keys.PageDown:
 				preventDefault();
 				const monthLength = getMonthLength(month, year);
@@ -794,6 +800,7 @@ export const Calendar = factory(function Calendar({
 				break;
 			case Keys.Enter:
 			case Keys.Space:
+			case Keys.SpaceAlt:
 				onValueChange(new Date(year, month, focusedDay));
 		}
 	}

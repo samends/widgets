@@ -59,11 +59,11 @@ export default class Cell extends I18nMixin(ThemedMixin(FocusMixin(WidgetBase)))
 		this._editingValue = value;
 	}
 
-	private _onKeyDown(key: number) {
+	private _onKeyDown(key: string) {
 		if (key === Keys.Enter) {
 			this._onSave();
 			this._callFocus('button');
-		} else if (key === Keys.Escape) {
+		} else if (key === Keys.Escape || key === Keys.EscapeAlt) {
 			this._editing = false;
 			this._callFocus('button');
 			this.invalidate();

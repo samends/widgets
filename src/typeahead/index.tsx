@@ -175,7 +175,7 @@ export const Typeahead = factory(function Typeahead({
 	}
 
 	function onKeyDown(
-		event: number,
+		event: string,
 		preventDefault: () => void,
 		onOpen: () => boolean,
 		onClose: () => void
@@ -185,9 +185,11 @@ export const Typeahead = factory(function Typeahead({
 		} = get(options(), { meta: true, read });
 		switch (event) {
 			case Keys.Escape:
+			case Keys.EscapeAlt:
 				onClose();
 				break;
 			case Keys.Down:
+			case Keys.DownAlt:
 				preventDefault();
 				if (!onOpen()) {
 					icache.set('activeIndex', (activeIndex = strict ? 0 : -1) => {
@@ -196,6 +198,7 @@ export const Typeahead = factory(function Typeahead({
 				}
 				break;
 			case Keys.Up:
+			case Keys.UpAlt:
 				preventDefault();
 				if (!onOpen()) {
 					icache.set('activeIndex', (activeIndex = 0) => {

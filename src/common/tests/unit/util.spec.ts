@@ -5,18 +5,26 @@ import { formatAriaProperties, Keys } from '../../util';
 
 registerSuite('util', {
 	keys() {
-		assert.strictEqual(Keys.Down, 40);
-		assert.strictEqual(Keys.End, 35);
-		assert.strictEqual(Keys.Enter, 13);
-		assert.strictEqual(Keys.Escape, 27);
-		assert.strictEqual(Keys.Home, 36);
-		assert.strictEqual(Keys.Left, 37);
-		assert.strictEqual(Keys.PageDown, 34);
-		assert.strictEqual(Keys.PageUp, 33);
-		assert.strictEqual(Keys.Right, 39);
-		assert.strictEqual(Keys.Space, 32);
-		assert.strictEqual(Keys.Tab, 9);
-		assert.strictEqual(Keys.Up, 38);
+		assert.strictEqual(Keys.Down, 'ArrowDown');
+		assert.strictEqual(Keys.DownAlt, 'Down');
+		assert.strictEqual(Keys.End, 'End');
+		assert.strictEqual(Keys.Enter, 'Enter');
+		assert.strictEqual(Keys.Escape, 'Escape');
+		assert.strictEqual(Keys.EscapeAlt, 'Esc');
+		assert.strictEqual(Keys.Home, 'Home');
+		assert.strictEqual(Keys.Left, 'ArrowLeft');
+		assert.strictEqual(Keys.LeftAlt, 'Left');
+		assert.strictEqual(Keys.PageDown, 'PageDown');
+		assert.strictEqual(Keys.Down, 'Down');
+		assert.strictEqual(Keys.PageUp, 'PageUp');
+		assert.strictEqual(Keys.Up, 'Up');
+		assert.strictEqual(Keys.Right, 'ArrowRight');
+		assert.strictEqual(Keys.RightAlt, 'Right');
+		assert.strictEqual(Keys.Space, ' ');
+		assert.strictEqual(Keys.SpaceAlt, 'Spacebar');
+		assert.strictEqual(Keys.Tab, 'Tab');
+		assert.strictEqual(Keys.Up, 'ArrowUp');
+		assert.strictEqual(Keys.UpAlt, 'Up');
 	},
 
 	formatAriaProperties() {
